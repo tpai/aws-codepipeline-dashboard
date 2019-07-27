@@ -4,6 +4,7 @@
       <input
         type="checkbox"
         name="pipelines[]"
+        :checked="pipeline.isSelected"
         :value="pipeline.name"
         :id="pipeline.name">
       <label :for="pipeline.name">
@@ -25,6 +26,7 @@ export default {
   methods: {
     change() {
       const selected = Array.from(this.$refs.form.querySelectorAll('[name^=pipelines]:checked')).map(x => x.value)
+      localStorage.setItem('selectedPipelineNames', JSON.stringify(selected))
       this.$emit('change', selected)
     }
   }

@@ -32,8 +32,19 @@ export default {
   },
   methods: {
     async initPipelines() {
+      const res = localStorage.getItem('selectedPipelineNames')
+      this.selectedPipelineNames = JSON.parse(res || '[]')
+      const selectedSet = this.selectedPipelineNames.reduce((set, name) => {
+        return set.add(name)
+      }, new Set())
       const { pipelines } = await getPipelines()
-      this.pipelines = pipelines
+
+      this.pipelines = pipelines.map(p => {
+        return {
+          ...p,
+          isSelected: selectedSet.has(p.name)
+        }
+      })
     },
     change(selectedPipelineNames) {
       this.selectedPipelineNames = selectedPipelineNames
