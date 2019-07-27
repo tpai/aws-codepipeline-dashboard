@@ -6,7 +6,7 @@ const credentials = new AWS.Credentials({
 })
 
 const pipeline = new AWS.CodePipeline({
-  region: 'ap-southeast-1',
+  region: process.env.VUE_APP_AWS_REGION,
   credentials
 })
 

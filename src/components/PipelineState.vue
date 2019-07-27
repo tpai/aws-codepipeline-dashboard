@@ -43,7 +43,8 @@ export default {
   },
   computed: {
     pipelineUrl() {
-      return `https://ap-southeast-1.console.aws.amazon.com/codesuite/codepipeline/pipelines/${this.name}/view`
+      const region = process.env.VUE_APP_AWS_REGION
+      return `https://${region}.console.aws.amazon.com/codesuite/codepipeline/pipelines/${this.name}/view`
     },
     stages() {
       return Array.from(this.getStageMap(this.state))
