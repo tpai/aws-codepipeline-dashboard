@@ -1,6 +1,14 @@
 # pipeline
 
 ## Project setup
+
+1. Setup env variables
+```
+cp .env.sample .env.local
+```
+Fill .env.local with your AWS credentials
+
+2.
 ```
 yarn install
 ```
