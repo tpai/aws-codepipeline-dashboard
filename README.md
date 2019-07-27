@@ -1,17 +1,34 @@
-# pipeline
+# Pipeline Dashboard
 
-## Project setup
+## How to run
 
 1. Setup env variables
 ```
 cp .env.sample .env.local
 ```
-Fill .env.local with your AWS credentials
+Fill `.env.local` with your AWS credentials
 
-2.
+2. Install dependencies
 ```
 yarn install
 ```
+
+3. Serve with development mode by
+```
+yarn serve
+```
+
+or run with production build
+```
+yarn build && cd dist/ && npx http-server
+```
+
+4. Open `http://localhost:8080` and select the pipelines you want to subscribe :)
+
+**Caveats:** [Notification API](https://developer.mozilla.org/en-US/docs/Web/API/Notifications_API/Using_the_Notifications_API) will be used to inform status changes of pipelines, and the feature is available only in secure contexts (HTTPS) or "localhost".
+
+
+## Project setup
 
 ### Compiles and hot-reloads for development
 ```
