@@ -1,9 +1,20 @@
 <template>
   <div>
-    <h3>{{ name }}</h3>
-    <span v-for="[name, status] in stages" :key="name" >
-      <span :class="[$style[status.toLowerCase()], $style['status']]">{{ name }}</span>
-    </span>
+    <a :href="pipelineUrl" target="_blank">
+      <h3>{{ name }}</h3>
+    </a>
+    <div v-if="state.stageStates">
+      <span v-for="stage in state.stageStates" :key="stage.stageName">
+        <span v-if="!stage.inboundTransitionState.enabled" :class="$style.disabled"> ⃠</span>
+        <a
+          target="_blank"
+          :href="stage.actionStates[0].entityUrl"
+          :title="getStatusMessage(stage)"
+          :class="getStatusClass(stage)">
+          {{ stage.stageName }}
+        </a>
+      </span>
+    </div>
   </div>
 </template>
 
@@ -31,11 +42,25 @@ export default {
     await this.refresh()
   },
   computed: {
+    pipelineUrl() {
+      return `https://ap-southeast-1.console.aws.amazon.com/codesuite/codepipeline/pipelines/${this.name}/view`
+    },
     stages() {
       return Array.from(this.getStageMap(this.state))
     }
   },
   methods: {
+    getStatusClass(stage) {
+      const statusClass = stage.latestExecution ? stage.latestExecution.status.toLowerCase() : ''
+      return [
+        this.$style[statusClass],
+        this.$style.status
+      ]
+    },
+    getStatusMessage(stage) {
+      if (!stage.actionStates[0] || !stage.actionStates.latestExecution) return ''
+      return stage.actionStates[0].latestExecution.summary
+    },
     async refresh() {
       const state = await getPipelineState(this.name)
       this.notifyIfChanged(this.state, state)
@@ -45,7 +70,7 @@ export default {
       if (!state.stageStates) return new Map()
       const m = new Map()
       state.stageStates.forEach(stage => {
-        m.set(stage.stageName, stage.latestExecution ? stage.latestExecution.status: 'Pending')
+        m.set(stage.stageName, stage.latestExecution && stage.latestExecution.status)
       })
       return m
     },
@@ -72,14 +97,54 @@ export default {
 }
 </script>
 
+<style>
+a {
+  text-decoration: none;
+  color: inherit;
+}
+</style>
 <style module>
 .status {
+  display: inline-block;
   background-color: #ccc;
   color: white;
   margin: 0 10px 0 0;
   padding: 5px;
   border-radius: 3px;
   font-size: 14px;
+}
+.disabled {
+  color: #ccc;
+  font-weight: bold;
+  margin-right: 10px;
+}
+.inprogress {
+  background-color: #6daeff;
+  position: relative;
+}
+.inprogress:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #DB4437,
+    #F4B400,
+    #0F9D58,
+    transparent
+  );
+  background-size: 100px 100%;
+}
+.inprogress:after :global {
+  animation: 3s linear move-bg infinite;
+}
+@keyframes :global(move-bg) {
+  from { background-position-x: 0px; }
+  to { background-position-x: 300px; }
 }
 .succeeded {
   background-color: #45b145;
