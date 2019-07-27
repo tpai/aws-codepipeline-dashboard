@@ -14,6 +14,7 @@
 import PipelineSelector from './components/PipelineSelector.vue'
 import PipelineState from './components/PipelineState.vue'
 import { getPipelines } from './api'
+import { requestPermission } from './utils/notification'
 
 export default {
   name: 'app',
@@ -28,6 +29,7 @@ export default {
     }
   },
   mounted() {
+    requestPermission()
     this.initPipelines()
   },
   methods: {

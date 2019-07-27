@@ -1,14 +1,16 @@
 <template>
   <div>
-    <h3>{{ state.pipelineName }}</h3>
-    <span v-for="stage in state.stageStates" :key="stage.stageName" >
-      <span :class="[$style[stage.latestExecution.status.toLowerCase()], $style['status']]">{{ stage.stageName }}</span>
+    <h3>{{ name }}</h3>
+    <span v-for="[name, status] in stages" :key="name" >
+      <span :class="[$style[status.toLowerCase()], $style['status']]">{{ name }}</span>
     </span>
   </div>
 </template>
 
 <script>
 import { getPipelineState } from '../api'
+import { pushNotification } from '../utils/notification'
+const REFRESH_INTERVAL = 60 * 1000
 
 export default {
   name: 'PipelineState',
@@ -20,11 +22,52 @@ export default {
   },
   data() {
     return {
-      state: {}
+      state: {},
+      interval: null
     }
   },
   async created() {
-    this.state = await getPipelineState(this.name)
+    this.interval = setInterval(this.refresh, REFRESH_INTERVAL)
+    await this.refresh()
+  },
+  computed: {
+    stages() {
+      return Array.from(this.getStageMap(this.state))
+    }
+  },
+  methods: {
+    async refresh() {
+      const state = await getPipelineState(this.name)
+      this.notifyIfChanged(this.state, state)
+      this.state = state
+    },
+    getStageMap(state) {
+      if (!state.stageStates) return new Map()
+      const m = new Map()
+      state.stageStates.forEach(stage => {
+        m.set(stage.stageName, stage.latestExecution ? stage.latestExecution.status: 'Pending')
+      })
+      return m
+    },
+    notifyIfChanged(oldState, newState) {
+      const oldStatuses = this.getStageMap(oldState)
+      const newStatuses = this.getStageMap(newState)
+
+      for (const stageName of oldStatuses.keys()) {
+        const newStatus = newStatuses.get(stageName)
+        if (oldStatuses.get(stageName) !== newStatus) {
+          pushNotification(`${this.name} Status Changed:`, {
+            renotify: true,
+            tag: 'status-change',
+            requireInteraction: true,
+            body: `${stageName}: ${newStatus}`
+          })
+        }
+      }
+    }
+  },
+  beforeDestroy() {
+    clearInterval(this.interval)
   }
 }
 </script>
