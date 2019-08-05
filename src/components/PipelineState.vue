@@ -1,7 +1,7 @@
 <template>
   <div>
-    <a :href="pipelineUrl" target="_blank">
-      <h3>{{ name }}</h3>
+    <a :href="pipelineUrl" target="_blank" :class="$style.title">
+      {{ name }}
     </a>
     <div v-if="state.stageStates">
       <span v-for="stage in state.stageStates" :key="stage.stageName">
@@ -105,6 +105,12 @@ a {
 }
 </style>
 <style module>
+.title {
+  display: inline-block;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 10px 0;
+}
 .status {
   display: inline-block;
   background-color: #ccc;
