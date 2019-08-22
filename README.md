@@ -4,7 +4,11 @@
 
 1. Setup env variables
 ```
+// manual
 cp .env.sample .env.local
+
+// generate by script (aws logged in)
+yarn env
 ```
 Fill `.env.local` with your AWS credentials
 
