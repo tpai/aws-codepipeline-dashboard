@@ -1,18 +1,8 @@
 #!bin/bash
 
-getValue() {
-  if [ ! -z $3 ]; then
-    echo $3
-    return 1
-  fi
-
-  VALUE=$(echo $1 | awk -F "=" '{print $NF}' | sed -e 's/^ *//')
-  echo $VALUE
-}
-
-AWS_REGION=$(getValue $(cat ~/.aws/config | grep region))
-AWS_ACCESS_KEY_ID=$(getValue $(cat ~/.aws/credentials | grep access_key_id))
-AWS_SECRET_ACCESS_KEY=$(getValue $(cat ~/.aws/credentials | grep secret_access_key))
+AWS_REGION=$(awk -F "[ =]+" '/^region/{print $2; exit}' ~/.aws/config)
+AWS_ACCESS_KEY_ID=$(awk -F "[ =]+" '/^aws_access_key_id/{print $2; exit}' ~/.aws/credentials)
+AWS_SECRET_ACCESS_KEY=$(awk -F "[ =]+" '/^aws_secret_access_key/{print $2; exit}' ~/.aws/credentials)
 
 cat <<EOF > .env.local
 VUE_APP_AWS_REGION=$AWS_REGION
