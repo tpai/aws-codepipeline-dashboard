@@ -3,10 +3,18 @@
 ## How to run
 
 1. Setup env variables
+
+Create `.env.local` from template and fill with your AWS credentials
+
 ```
 cp .env.sample .env.local
 ```
-Fill `.env.local` with your AWS credentials
+
+Or generate by script if you've logged in AWS in terminal
+
+```
+yarn env
+```
 
 2. Install dependencies
 ```
