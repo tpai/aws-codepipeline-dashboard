@@ -7,6 +7,7 @@ export const requestPermission = () => {
 
 export const pushNotification = (title, options) => {
   if (Notification.permission !== 'granted') {
+    // eslint-disable-next-line
     console.log(new Date().toString(), title, options.body)
   } else {
     new Notification(title, options)
