@@ -63,7 +63,7 @@ export default {
       return stage.actionStates[0].latestExecution.summary
     },
     async refresh() {
-      const state = await getPipelineState(this.name)
+      const { data: state } = await getPipelineState(this.name)
       this.notifyIfChanged(this.state, state)
       this.state = state
     },

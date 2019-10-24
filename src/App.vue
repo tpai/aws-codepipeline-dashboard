@@ -39,7 +39,7 @@ export default {
       const selectedSet = this.selectedPipelineNames.reduce((set, name) => {
         return set.add(name)
       }, new Set())
-      const { pipelines } = await getPipelines()
+      const { data: { pipelines } } = await getPipelines()
 
       this.pipelines = pipelines.map(p => {
         return {

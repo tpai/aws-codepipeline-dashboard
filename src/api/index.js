@@ -1,17 +1,7 @@
-const AWS = require('aws-sdk')
+const axios = require('axios')
+const bucket = process.env.VUE_APP_S3_BUCKET_NAME
+const prefix = process.env.VUE_APP_S3_BUCKET_PREFIX
 
-const credentials = new AWS.Credentials({
-  accessKeyId: process.env.VUE_APP_AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.VUE_APP_AWS_SECRET_ACCESS_KEY,
-})
+export const getPipelines = () => axios.get(`https://${bucket}.s3-ap-southeast-1.amazonaws.com/${prefix}pipeline_list.json`)
 
-const pipeline = new AWS.CodePipeline({
-  region: process.env.VUE_APP_AWS_REGION,
-  credentials
-})
-
-export const getPipelines = () => pipeline.listPipelines().promise()
-
-export const getPipelineState = (name) => pipeline.getPipelineState({
-  name
-}).promise()
+export const getPipelineState = (name) => axios.get(`https://${bucket}.s3-ap-southeast-1.amazonaws.com/${prefix}${name}.json`)
