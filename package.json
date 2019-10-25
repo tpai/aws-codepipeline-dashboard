@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "env": "sh ./setup_env.sh"
+    "env": "sh ./setup_env.sh",
+    "release": "yarn build && aws s3 sync dist/ s3://${S3_BUCKET_DIR}/"
   },
   "dependencies": {
     "aws-sdk": "^2.501.0",

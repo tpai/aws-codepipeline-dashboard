@@ -35,6 +35,12 @@ yarn build && cd dist/ && npx http-server
 
 **Caveats:** [Notification API](https://developer.mozilla.org/en-US/docs/Web/API/Notifications_API/Using_the_Notifications_API) will be used to inform status changes of pipelines, and the feature is available only in secure contexts (HTTPS) or "localhost".
 
+## Deploy client to S3
+
+```
+S3_BUCKET_DIR=<your s3 bucket + prefix> yarn release
+```
+
 ## References
 
 * [aws-sdk: AWS.CodePipeline](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CodePipeline.html)
