@@ -5,7 +5,7 @@
     </a>
     <div v-if="state.stageStates">
       <span v-for="stage in state.stageStates" :key="stage.stageName">
-        <span v-if="!stage.inboundTransitionState.enabled" :class="$style.disabled"> ⃠</span>
+        <span v-if="!stage.inboundTransitionState.enabled" :class="$style.disabled">{{ '\u20E0' }}</span>
         <a
           target="_blank"
           :href="stage.actionStates[0].entityUrl"
