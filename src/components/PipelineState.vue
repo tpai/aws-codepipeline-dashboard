@@ -26,6 +26,7 @@
 <script>
 import { getPipelineState } from '../api'
 import { pushNotification } from '../utils/notification'
+import { formatTimeAgo } from '../utils/time'
 const REFRESH_INTERVAL = 60 * 1000
 
 export default {
@@ -57,13 +58,7 @@ export default {
   },
   methods: {
     formatTime(str) {
-      const padStart = (n) => n.toString().padStart(2, '0')
-      const dateObj = new Date(str)
-      const month = padStart(dateObj.getMonth() + 1)
-      const date = padStart(dateObj.getDate())
-      const hour = padStart(dateObj.getHours())
-      const minute = padStart(dateObj.getMinutes())
-      return `${month}/${date} ${hour}:${minute}`
+      return formatTimeAgo(new Date(str))
     },
     getStatusClass(stage) {
       const statusClass = stage.latestExecution ? stage.latestExecution.status.toLowerCase() : ''
