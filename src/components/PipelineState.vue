@@ -3,16 +3,21 @@
     <a :href="pipelineUrl" target="_blank" :class="$style.title">
       {{ name }}
     </a>
-    <div v-if="state.stageStates">
-      <span v-for="stage in state.stageStates" :key="stage.stageName">
+    <div v-if="state.stageStates" :class="$style.stages">
+      <span v-for="stage in state.stageStates" :key="stage.stageName" :class="$style.stageContainer">
         <span v-if="!stage.inboundTransitionState.enabled" :class="$style.disabled">{{ '\u20E0' }}</span>
-        <a
-          target="_blank"
-          :href="stage.actionStates[0].entityUrl"
-          :title="getStatusMessage(stage)"
-          :class="getStatusClass(stage)">
-          {{ stage.stageName }}
-        </a>
+        <div :class="$style.stage">
+          <a
+            target="_blank"
+            :href="stage.actionStates[0].entityUrl"
+            :title="getStatusMessage(stage)"
+            :class="[$style.status, getStatusClass(stage)]">
+            {{ stage.stageName }}
+          </a>
+          <div :class="$style.time">
+            {{ formatTime(stage.actionStates[0].latestExecution.lastStatusChange) }}
+          </div>
+        </div>
       </span>
     </div>
   </div>
@@ -51,12 +56,18 @@ export default {
     }
   },
   methods: {
+    formatTime(str) {
+      const padStart = (n) => n.toString().padStart(2, '0')
+      const dateObj = new Date(str)
+      const month = padStart(dateObj.getMonth() + 1)
+      const date = padStart(dateObj.getDate())
+      const hour = padStart(dateObj.getHours())
+      const minute = padStart(dateObj.getMinutes())
+      return `${month}/${date} ${hour}:${minute}`
+    },
     getStatusClass(stage) {
       const statusClass = stage.latestExecution ? stage.latestExecution.status.toLowerCase() : ''
-      return [
-        this.$style[statusClass],
-        this.$style.status
-      ]
+      return this.$style[statusClass]
     },
     getStatusMessage(stage) {
       if (!stage.actionStates[0] || !stage.actionStates.latestExecution) return ''
@@ -111,6 +122,9 @@ a {
   font-weight: bold;
   margin: 10px 0;
 }
+.stages {
+  display: flex;
+}
 .status {
   display: inline-block;
   background-color: #ccc;
@@ -119,6 +133,21 @@ a {
   padding: 5px;
   border-radius: 3px;
   font-size: 14px;
+  min-width: 70px;
+  text-align: center;
+}
+.stageContainer {
+  display: flex;
+}
+.stage {
+  display: flex;
+  flex-direction: column;
+}
+.time {
+  margin: 0 10px 0 0;
+  font-size: 10px;
+  text-align: right;
+  color: #888;
 }
 .disabled {
   color: #ccc;
