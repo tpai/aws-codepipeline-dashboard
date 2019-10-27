@@ -23,6 +23,7 @@ const syncPipelineList = async () => {
   const res = await getPipelines()
   await s3.upload({
     Bucket: s3Config.bucket,
+    CacheControl: 'no-cache',
     Key: `${s3Config.prefix}pipeline_list.json`,
     Body: Buffer.from(JSON.stringify(res))
   }).promise()
@@ -37,6 +38,7 @@ const uploadPipelineState = async (pipeline) => {
   const state = await getPipelineState(pipeline)
   await s3.upload({
     Bucket: s3Config.bucket,
+    CacheControl: 'no-cache',
     Key: `${s3Config.prefix}${pipeline}.json`,
     Body: Buffer.from(JSON.stringify(state))
   }).promise()
