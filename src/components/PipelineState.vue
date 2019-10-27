@@ -15,7 +15,7 @@
             {{ stage.stageName }}
           </a>
           <div :class="$style.time">
-            {{ formatTime(stage.actionStates[0].latestExecution.lastStatusChange) }}
+            {{ formatTime(stage.latestAction.latestExecution.lastStatusChange) }}
           </div>
         </div>
       </span>
@@ -76,7 +76,20 @@ export default {
     async refresh() {
       const { data: state } = await getPipelineState(this.name)
       this.notifyIfChanged(this.state, state)
-      this.state = state
+      this.state = this.processState(state)
+    },
+    processState(state) {
+      state.stageStates.forEach(stage => {
+        stage.latestAction = this.getLatestAction(stage.actionStates)
+      })
+      return state
+    },
+    getLatestAction(actionStates = []) {
+      return actionStates.sort((a1, a2) => {
+        const { latestExecution: { lastStatusChange: t1 } } = a1
+        const { latestExecution: { lastStatusChange: t2 } } = a2
+        return new Date(t2).valueOf() - new Date(t1).valueOf()
+      })[0]
     },
     getStageMap(state) {
       if (!state.stageStates) return new Map()
