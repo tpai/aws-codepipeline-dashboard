@@ -35,6 +35,8 @@ yarn build && cd dist/ && npx http-server
 
 **Caveats:** [Notification API](https://developer.mozilla.org/en-US/docs/Web/API/Notifications_API/Using_the_Notifications_API) will be used to inform status changes of pipelines, and the feature is available only in secure contexts (HTTPS) or "localhost".
 
+**Notice:** Add `?nosummary=1` query if you don't want to see commit messages.
+
 ## Deploy client to S3
 
 ```

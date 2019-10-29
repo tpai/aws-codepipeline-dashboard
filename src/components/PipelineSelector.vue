@@ -1,5 +1,5 @@
 <template>
-  <form @change="change" ref="form">
+  <form @change="change" ref="form" :class="$style.form">
     <div v-for="pipeline in pipelines" :key="pipeline.name">
       <input
         type="checkbox"
@@ -34,4 +34,13 @@ export default {
 </script>
 
 <style module>
+.form {
+  position: fixed;
+  left: 0;
+  top: 0;
+  padding: 10px;
+  height: calc(100vh - 20px);
+  overflow-y: scroll;
+  background: white;
+}
 </style>

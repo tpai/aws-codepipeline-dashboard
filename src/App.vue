@@ -1,7 +1,7 @@
 <template>
   <div :class="$style.app">
     <PipelineSelector :pipelines="pipelines" @change="change" />
-    <div :class="$style.pipelineStates">
+    <div :class="[$style.pipelineStates, {[$style['pipelineStates-summary']]: !noSummary}]">
       <PipelineState
         v-for="name in selectedPipelineNames"
         :key="name"
@@ -32,6 +32,12 @@ export default {
     requestPermission()
     this.initPipelines()
   },
+  computed: {
+    noSummary() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('nosummary');
+    }
+  },
   methods: {
     async initPipelines() {
       const res = localStorage.getItem('selectedPipelineNames')
@@ -55,6 +61,12 @@ export default {
 }
 </script>
 
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+}
+</style>
 <style module>
 .app {
   display: flex;
@@ -65,10 +77,13 @@ export default {
 
 .pipelineStates {
   flex: 1;
-  margin: 0 30px;
-  height: calc(100vh - 16px - 60px);
   display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
+  margin: 0 340px;
+  height: 100vh;
+  flex-flow: column wrap;
+}
+
+.pipelineStates-summary {
+  flex-flow: column nowrap;
 }
 </style>

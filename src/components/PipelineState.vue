@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="[$style.container, {[$style['container-summary']]: !noSummary}]">
     <a :href="pipelineUrl" target="_blank" :class="$style.title">
       {{ name }}
     </a>
@@ -20,6 +20,7 @@
         </div>
       </span>
     </div>
+    <pre v-if="!noSummary" :class="$style.summary">{{ summary }}</pre>
   </div>
 </template>
 
@@ -54,6 +55,16 @@ export default {
     },
     stages() {
       return Array.from(this.getStageMap(this.state))
+    },
+    noSummary() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('nosummary');
+    },
+    summary() {
+      if (this.noSummary) {
+        return ''
+      }
+      return this.getStatusMessage(this.state.stageStates[0])
     }
   },
   methods: {
@@ -65,7 +76,7 @@ export default {
       return this.$style[statusClass]
     },
     getStatusMessage(stage) {
-      if (!stage.actionStates[0] || !stage.actionStates.latestExecution) return ''
+      if (!stage.actionStates[0] || !stage.actionStates[0].latestExecution) return ''
       return stage.actionStates[0].latestExecution.summary
     },
     async refresh() {
@@ -124,6 +135,17 @@ a {
 }
 </style>
 <style module>
+.container {
+  border: 1px solid transparent;
+  border-radius: 3px;
+  padding: 0 10px;
+}
+
+.container-summary {
+  margin: 10px;
+  width: calc(100% - 42px);
+}
+
 .title {
   display: inline-block;
   font-size: 18px;
@@ -132,6 +154,7 @@ a {
 }
 .stages {
   display: flex;
+  flex-flow: row nowrap;
 }
 .status {
   display: inline-block;
@@ -150,6 +173,7 @@ a {
 .stage {
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 .time {
   margin: 0 10px 0 0;
@@ -195,5 +219,9 @@ a {
 }
 .failed {
   background-color: #f54138;
+}
+.summary {
+  white-space: normal;
+  max-width: 400px;
 }
 </style>
